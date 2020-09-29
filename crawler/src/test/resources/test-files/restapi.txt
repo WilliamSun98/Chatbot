@@ -1,0 +1,12 @@
+- make developers learn instead of memorise API
+- need logical consistency
+- there is a bigger world than our API so the API will be larger and more complex
+- keep things simple
+- base urls per resource - usually 2: /collection/specific
+- CRUD maps to POST GET PUT DELETE
+- nouns should be plurals
+- associations: link them together
+- use variations with urls to make base url simple
+- pagination: use limit and offset
+- versioning: different versions for APIs in base url, all the way to the left
+- fields as query params

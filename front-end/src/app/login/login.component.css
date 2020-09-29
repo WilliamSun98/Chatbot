@@ -1,0 +1,41 @@
+.login-background {
+  background-color: #f1eff0;
+  height: 100vh;
+  width: 100%;
+}
+
+.center-container {
+  margin: auto;
+  padding-top: 12.5rem;
+  text-align: center;
+}
+
+.logo-holder {
+  margin: auto;
+  text-align: center;
+}
+
+.logo {
+  width: 600px;
+}
+
+.info {
+  margin: auto;
+  max-width: 500px;
+  color: #212529;
+}
+
+.login-btn {
+  width: 200px;
+  color: #fff;
+  background-color: #99e1d9;
+  border-color: #99e1d9;
+  /* background-color: #c1272d;
+  border-color: #c1272d; */
+}
+
+.guest-link a {
+  /* color: #99e1d9; */
+  font-size: 0.9rem;
+  color: #cc4e53;
+}

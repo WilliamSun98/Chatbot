@@ -1,0 +1,248 @@
+<div class="container-fluid">
+  <div class="row header">
+    <div class="icon-left">
+      <i class="fas fa-handshake fa-2x icon-hover" (click)="openModal(template)"></i>
+    </div>
+    <div class="icon-right">
+      <label for="file-input">
+        <i
+          class="fas fa-cloud-upload-alt fa-2x icon-hover"
+          style="padding-right: 0.5rem; padding-left: 3rem"
+          placement="bottom"
+        ></i>
+      </label>
+      <input
+        id="file-input"
+        type="file"
+        style="display: none"
+        accept=".pdf, .html, .txt"
+        (change)="handleFileInput($event.target.files)"
+      />
+      <i
+        class="fas fa-info-circle fa-2x"
+        style="padding-right: 0.5rem;"
+        [tooltip]="infoMessage"
+        placement="bottom"
+      ></i>
+      <i
+        class="fas fa-palette fa-2x icon-hover"
+        style="padding-right: 0.5rem;"
+        [popover]="palette"
+        [outsideClick]="true"
+        placement="bottom"
+      ></i>
+      <i class="fas fa-user-circle fa-2x icon-hover"></i>
+    </div>
+    <div class="logo-holder">
+      <img class="logo" src="../../assets/img/UoT_Chatbot_logo.png" alt="FINTECH CANADA" />
+    </div>
+  </div>
+
+  <div class="row">
+    <div
+      #chatbox
+      class="messages-holder"
+      [ngStyle]="{ 'margin-bottom': folded ? '70px' : '256px' }"
+    >
+      <ng-container *ngFor="let msg of messages">
+        <div class="bot-message-holder" *ngIf="msg.bot">
+          <span class="bot-message" [innerHTML]="msg.message | safeHtml"></span>
+          <!--<p class="bot-message bg-light">{{ msg.message }}</p>-->
+        </div>
+
+        <div class="message-holder" *ngIf="!msg.bot">
+          <p class="message" [ngStyle]="{ 'background-color': messageColour }">{{ msg.message }}</p>
+        </div>
+      </ng-container>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="message-box">
+      <form [formGroup]="queryForm" (ngSubmit)="onSubmit()">
+        <div class="input-group send-holder">
+          <input type="text" formControlName="query" class="form-control" />
+          <span class="input-group-btn">
+            <button class="btn btn-chatbot" type="submit">
+              Send
+            </button>
+            <button class="btn" type="button" (click)="hoverOver()">
+              <i class="fas fa-filter fa-lg"></i>
+            </button>
+          </span>
+        </div>
+      </form>
+      <div class="mt-2" *ngIf="!folded"></div>
+      <div class="filter-container" *ngIf="!folded">
+        <div class="container">
+          <div class="row mb-3">
+            <div class="filter-item col-md-6">
+              <h6 class="title">Website</h6>
+              <input #siteInput type="text" placeholder="URL" class="form-control site" />
+            </div>
+
+            <div class="filter-item-small col-md-3">
+              <h6 class="title">Type</h6>
+              <input
+                type="checkbox"
+                class="form-check-input"
+                id="pdf"
+                ngDefaultControl
+                [(ngModel)]="pdf"
+              />
+              <label class="form-check-label" for="pdf">pdf</label>
+            </div>
+
+            <div class="filter-item-small col-md-3">
+              <h6 class="title">Search By</h6>
+              <input
+                type="checkbox"
+                class="form-check-input"
+                id="isJob"
+                [(ngModel)]="isjob"
+                (change)="hintCheck($event)"
+                ngDefaultControl
+              />
+              <label class="form-check-label" for="isJob">Job</label>
+            </div>
+          </div>
+          <div class="row">
+            <div class="filter-item col-md-12">
+              <h6 class="title">Dates</h6>
+              <div class="form-row">
+                <div class="form-group col-md-6">
+                  <input
+                    #startDateInput
+                    type="text"
+                    placeholder="Start date"
+                    class="form-control date"
+                    bsDatepicker
+                    placement="top"
+                    [bsConfig]="{
+                      adaptivePosition: true,
+                      isAnimated: true,
+                      containerClass: 'theme-red'
+                    }"
+                  />
+                </div>
+                <div class="form-group col-md-6">
+                  <input
+                    #endDateInput
+                    type="text"
+                    placeholder="End date"
+                    class="form-control date"
+                    bsDatepicker
+                    placement="top"
+                    [bsConfig]="{
+                      adaptivePosition: true,
+                      isAnimated: true,
+                      containerClass: 'theme-red'
+                    }"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #template>
+  <div class="modal-body">
+    <i
+      class="fas fa-times fa-md icon-hover"
+      style="float: right;"
+      (click)="partnersModal.hide()"
+    ></i>
+    <div class="logo-holder mt-2">
+      <img class="logo pl-4" src="../../assets/img/partnerships_logo.png" alt="FINTECH CANADA" />
+    </div>
+    <h4 class="text-center pb-2 mt-4 mb-2">Partners and Content Contributors</h4>
+    <div class="container-fluid mb-2">
+      <div class="row pt-2 pb-2 vertical-align">
+        <div class="col">
+          <img class="partner-img" src="../../assets/img/partners/UoT.png" alt="" />
+        </div>
+        <div class="col">
+          <img
+            class="partner-img"
+            src="../../assets/img/partners/Standards-council-ofCanada.png"
+            alt=""
+          />
+        </div>
+        <div class="col">
+          <img class="partner-img" src="../../assets/img/partners/Canda.png" alt="" />
+        </div>
+        <div class="col">
+          <img class="partner-img" src="../../assets/img/partners/CAF.png" alt="" />
+        </div>
+        <div class="col">
+          <img class="partner-img" src="../../assets/img/partners/Instar_AGF.png" alt="" />
+        </div>
+      </div>
+      <div class="row pt-2 pb-2 vertical-align">
+        <div class="col">
+          <img class="partner-img" src="../../assets/img/partners/Wildeboer.png" alt="" />
+        </div>
+        <div class="col">
+          <img class="partner-img" src="../../assets/img/partners/UNCDF.png" alt="" />
+        </div>
+        <div class="col">
+          <img class="partner-img" src="../../assets/img/partners/Bill&Mgates.png" alt="" />
+        </div>
+        <div class="col">
+          <img class="partner-img" src="../../assets/img/partners/DCSIL.png" alt="" />
+        </div>
+        <div class="col">
+          <img class="partner-img" src="../../assets/img/partners/innovationCanada.png" alt="" />
+        </div>
+      </div>
+      <div class="row pt-2 pb-2 vertical-align">
+        <div class="col">
+          <img class="partner-img" src="../../assets/img/partners/UNHCR.png" alt="" />
+        </div>
+        <div class="col">
+          <img class="partner-img" src="../../assets/img/partners/InnovationSask.png" alt="" />
+        </div>
+        <div class="col">
+          <img class="partner-img" src="../../assets/img/partners/AMLshop.png" alt="" />
+        </div>
+        <div class="col">
+          <img class="partner-img" src="../../assets/img/partners/BCGOV.png" alt="" />
+        </div>
+        <div class="col">
+          <img class="partner-img" src="../../assets/img/partners/IBM_Watson.jpg" alt="" />
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #palette>
+  <div class="container">
+    <div class="row">
+      <span class="dot" style="background-color: #99e1d9" (click)="setColour('#99e1d9')"></span>
+      <span class="dot" style="background-color: #e6e8e6" (click)="setColour('#e6e8e6')"></span>
+      <span class="dot" style="background-color: #f2e94e" (click)="setColour('#f2e94e')"></span>
+    </div>
+    <div class="row">
+      <span class="dot" style="background-color: #ffc857" (click)="setColour('#ffc857')"></span>
+      <span class="dot" style="background-color: #e3daff" (click)="setColour('#e3daff')"></span>
+      <span class="dot" style="background-color: #b9cfd4" (click)="setColour('#b9cfd4')"></span>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #upload_template>
+  <div class="modal-body">
+    <i
+      class="fas fa-times fa-md icon-hover"
+      style="float: right;"
+      (click)="uploadFileModal.hide()"
+    ></i>
+    <span>We support three types of files to upload.</span>
+    <input type="file" />
+  </div>
+</ng-template>

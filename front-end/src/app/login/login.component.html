@@ -1,0 +1,16 @@
+<div class="login-background">
+  <div class="center-container">
+    <div class="logo-holder mb-4">
+      <img class="logo" src="../../assets/img/UoT_Chatbot_logo.png" alt="FINTECH CANADA" />
+    </div>
+    <div class="info mb-4">
+      This chatbot provides answers to questions about FinTech, AI, innovation, investment, and
+      Canada.
+    </div>
+    <button *ngIf="!loggedin" id="googleBtn" class="btn login-btn mb-2" (click)="loggedin = !loggedin">Login</button>
+    <a *ngIf="loggedin" id="loggedBtn" class="btn login-btn mb-2" href="/chatbot">Continue as </a>
+    <div class="guest-link">
+      <a href="/chatbot">Continue as guest</a>
+    </div>
+  </div>
+</div>

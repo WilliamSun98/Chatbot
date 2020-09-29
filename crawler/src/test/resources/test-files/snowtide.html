@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title>Indexing PDF documents with Lucene – Snowtide</title>
+        <meta name="verify-v1" content="0M58DS8kmzLjo6/xySYDOZbaRue4VJjU13UMoh2AmSo=" />
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <link rel="shortcut icon" href="/assets/favicon.ico" type="image/x-icon" />
+        
+        <link rel="stylesheet" type="text/css" href="/assets/template/reset.css" media="screen" />
+        <link rel="stylesheet" type="text/css" href="/assets/template/960-min.css" media="screen" />
+        <link rel="stylesheet" type="text/css" href="/assets/template/style.css" media="screen" />
+        <script type="text/javascript" src="/assets/template/ecma262.js"></script>
+        <script type="text/javascript" src="/assets/template/jquery-1.5.1.min.js"></script>
+        <script type="text/javascript" src="/assets/template/jquery.scrollTo-1.4.2-min.js"></script>
+        <script type="text/javascript" src="/assets/template/jquery-ui-1.8.16.custom.min.js"></script>
+        
+        <link rel="stylesheet" type="text/css" href="/assets/template/ui-lightness/jquery-ui-1.8.16.custom.css" media="screen" />
+        
+        <script type="text/javascript" src="/assets/syntaxhighlighter_3.0.83/scripts/shCore.js"></script>
+        <script type="text/javascript" src="/assets/syntaxhighlighter_3.0.83/scripts/shBrushJava.js"></script>
+        <script type="text/javascript" src="/assets/syntaxhighlighter_3.0.83/scripts/shBrushXml.js"></script>
+        <script type="text/javascript" src="/assets/syntaxhighlighter_3.0.83/scripts/shBrushBash.js"></script>
+        <script type="text/javascript" src="/assets/syntaxhighlighter_3.0.83/scripts/shBrushCSharp.js"></script>
+        <script type="text/javascript" src="/assets/syntaxhighlighter_3.0.83/scripts/shBrushPlain.js"></script>
+
+
+        
+        <link type="text/css" rel="stylesheet" href="/assets/syntaxhighlighter_3.0.83/styles/shCoreEclipse.css" />
+        <script type="text/javascript">SyntaxHighlighter.defaults.toolbar=false;SyntaxHighlighter.all();</script>
+        <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-586655-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
+        
+    </head>
+    <body>
+        <div id="header">
+          <div class="container_16">
+            <a href="/" class="logo"><img src="/assets/template/logo-snowtide-white-small.png" /></a>
+            <div class="navlinks">
+              <div class="left">
+                <a href="/">Home</a>
+                <a href="/customers">Our Customers</a>
+                <a href="/help">Help</a>
+                <a href="/contact">Contact</a>
+              </div>
+              <div class="right">
+                <a class="highlight" href="/downloads">Downloads</a>
+                <a class="highlight" href="/purchasing"><strong>Buy</strong></a>
+              </div>
+            </div>
+            <div class="clear"></div>
+          </div>
+        </div>
+        <div class="clear"></div>
+        <div id="content">
+  <div class="container_16 help-frame">
+    <div class="help nav top grid_16 alpha omega">
+      <div class="toc"><a href="/help">PDFxStream v<span class="selectedversion">3.7.0</span> Technical Documentation</a></div>
+      <div class="help-next"><a href="art-of-pdf-text-extraction">Next &gt;&gt;</a> <span class="help-title">Appendix: The Art of Reading PDF Text</span></div>
+      <div class="help-prev"><a href="selective-pdf-text-extraction-based-on-bookmark-coordinates">&lt;&lt; Previous</a> <span class="help-title">Selective PDF Text Extraction Based on Bookmark Coordinates</span></div>
+    </div>
+    <div class="help-content grid_16 alpha omega">
+      <div class="section-ind"><p style="font-size:smaller">Applies to:<br /><a href="/to/pdfts">PDFTextStream</a></p></div>
+      <div class="grid_12 alpha omega"><h1>Indexing PDF documents with Lucene</h1><p>
+    <a href="http://lucene.apache.org">Apache Lucene</a> is a full-text search
+    engine written in Java. It is a perfect choice for applications that need
+    'built-in' search functionality: it's fast, works well with any kind of
+    document structure, and is relatively painless to build around.
+  </p><p>Lucene is focused on text indexing, and as such, it does not natively
+    handle popular document formats such as Word, PDF, HTML, etc. Rather, it
+    requires the use of external tools or libraries to convert any such
+    documents into collections of text fields, which can then be easily indexed.
+    In conjunction with Snowtide's open
+    source <a href="http://github.com/snowtide/lucene-pdf">lucene-pdf</a>
+    library, PDFxStream fills this role to help Lucene index content sourced
+    from PDF documents.
+  </p><p class="aside">
+    Please refer to the documentation in
+    the <a href="http://github.com/snowtide/lucene-pdf">lucene-pdf</a> project's
+    README for information on how to obtain the lucene-pdf library itself,
+    additional code samples, and a summary of the more in-depth
+    tutorial/documentation presented here.
+  </p><p>
+    <a href="http://github.com/snowtide/lucene-pdf">lucene-pdf</a> enables
+    Lucene indexing of PDF documents with two classes:
+    <code>com.snowtide.pdf.lucene.LucenePDFDocumentFactory</code>
+    and <code>com.snowtide.pdf.lucene.LucenePDFConfiguration</code>.  Using
+    them is very straightforward:
+  </p><ol>
+    <li>A <code>com.snowtide.pdf.lucene.LucenePDFConfiguration</code>
+      instance is created. This configuration determines how content from a
+      PDF file processed by PDFxStream will be used to construct index records
+      (called <code>Document</code>s in Lucene parlance).
+    </li>
+    <li>That <code>com.snowtide.pdf.lucene.LucenePDFConfiguration</code>
+      instance is passed along with an open PDF file into one of the
+      static <code>buildPDFDocument()</code> methods provided
+      by <code>com.snowtide.pdf.lucene.LucenePDFDocumentFactory</code>.
+    </li>
+    <li>The <code>LucenePDFDocumentFactory.buildPDFDocument()</code> method
+      returns a <code>org.apache.lucene.document.Document</code> instance.
+      The Lucene <code>Document</code>
+      instances that are created by the <code>LucenePDFDocumentFactory.buildPDFDocument()</code>
+      methods derive their fields' contents from the text and metadata
+      attributes extracted from the source PDF file by PDFxStream, and their
+      field names and index attributes (whether to store, index, and/or tokenize
+      each field's contents) from the configuration held by
+      the <code>com.snowtide.pdf.lucene.LucenePDFConfiguration</code> instance
+      that was created in
+      the first step.
+    </li>
+    <li>
+      Once a Lucene <code>Document</code> instance is obtained from
+    the <code>com.snowtide.pdf.lucene.LucenePDFDocumentFactory</code> class, it
+    can be passed directly into Lucene's indexing process (typically via
+    an <code>org.apache.lucene.index.IndexWriter</code>), which will add
+    the <code>Document</code> to an open index.
+    </li>
+  </ol><p>It's a wonderful thing when the code needed to do something is shorter
+    than the space needed to explain all that it does for you. Here's some
+    heavily-commented example code that does everything described above using a
+    sample PDF file and Lucene index:</p><pre class="brush: java">import com.snowtide.pdf.lucene.*;
+import org.apache.lucene.index.IndexWriter;
+import org.apache.lucene.document.Document;
+import com.snowtide.PDF;
+
+import java.io.*;
+
+public class EasyLuceneIntegration {
+    /**
+     * Simple method that adds the contents of the provided PDF document to the
+     * Lucene index via an already-open Lucene IndexWriter.
+     */
+    public static void addPDFToIndex (IndexWriter openIndex, File pdfFile)
+            throws IOException {
+        // create and configure new LucenePDFConfiguration instance
+        LucenePDFConfiguration config = new LucenePDFConfiguration();
+        // set the name to be used for the main body of text extracted from the
+        // PDF file, and set it to be tokenized and indexed, but not be stored
+        config.setBodyTextFieldName("body_text");
+        config.setBodyTextSettings(false, true, true);
+        // only copy the PDF metadata attributes into Lucene Document instances
+        // produced by LucenePDFDocumentFactory that we explicitly map
+        // via LucenePDFConfiguration.setMetadataFieldMapping()
+        config.setCopyAllPDFMetadata(false);
+        // cause PDF metadata attribute values to be stored, tokenized, and indexed
+        config.setMetadataSettings(true, true, true);
+        // Explicitly set the names that should be used for the fields that are
+        // created in the Lucene Document instance -- otherwise, default PDF
+        // names will be used that will likely not be picked up when the index
+        // is searched.
+        // For example, the default name for the modification date
+        // field in PDF files is 'ModDate', but our example Lucene index stores
+        // the modification dates of Documents with the name 'mod_date'. The
+        // third setMetadataFieldMapping() call below establishes the correct mapping.
+        config.setMetadataFieldMapping(com.snowtide.pdf.Document.ATTR_AUTHOR, "creator");
+        config.setMetadataFieldMapping(com.snowtide.pdf.Document.ATTR_CREATION_DATE, "creation_date");
+        config.setMetadataFieldMapping(com.snowtide.pdf.Document.ATTR_MOD_DATE, "mod_date");
+        // actually generate the Lucene Document instance from the PDF file
+        // using the configuration we've just built, and add the Document to the
+        // Lucene index
+        com.snowtide.pdf.Document pdf = PDF.open(pdfFile);
+        Document doc = LucenePDFDocumentFactory.buildPDFDocument(pdf, config);
+        pdf.close();
+        openIndex.addDocument(doc);
+    }
+}</pre><p>Additional examples are available in
+    the <a href="http://github.com/snowtide/lucene-pdf">lucene-pdf</a>
+    project's README.</p><h2>
+    Customizing Lucene <code>Document</code> fields
+  </h2><p>
+    Unless a <code>com.snowtide.pdf.lucene.LucenePDFConfiguration</code>
+    instance is provided in the call to one of the buildPDFDocument() methods,
+    the fields in the created Lucene <code>Document</code>s take on the defaults
+    provided by the PDF file. For example, the default name of the creation date
+    attribute included in the metadata of some PDF files is <code>CreationDate</code>,
+    so that will be the name assigned to the field in the Lucene <code>Document</code>
+    that contains the value of that attribute. 
+  </p><p>
+    Allowing these default names to be used for the fields in each Lucene
+    Document is convenient, but is probably not what you want; few Lucene
+    indexes will have used those defaults when being built. In order to
+    seamlessly integrate PDFxStream into your Lucene installation, you will
+    want to customize how the <code>Document</code> instances are built. For
+    this, you should use <code>com.snowtide.pdf.lucene.LucenePDFConfiguration</code>.
+  </p><p>
+    Typically, a single <code>com.snowtide.pdf.lucene.LucenePDFConfiguration</code>
+    instance will be created and configured for each Lucene index that PDF
+    content needs to be added to.
+  </p><p>
+    The main body of text contained in a PDF file is stored in a Lucene Document
+    object as just another named field. This name defaults to the value defined
+    by <code>com.snowtide.pdf.lucene.LucenePDFConfiguration.DEFAULT_MAIN_TEXT_FIELD_NAME</code>
+    (<code>"text"</code>), but can be set either via
+    the <code>com.snowtide.pdf.lucene.LucenePDFConfiguration</code> constructor,
+    or by a setter method on
+    a <code>com.snowtide.pdf.lucene.LucenePDFConfiguration</code> instance.
+  </p><p>Also, the names used to identify the extracted metadata attributes can
+    be customized. For example, a PDF file might contain these attributes:</p><table class="basic">
+    <thead>
+      <tr>
+        <td>Attribute Name</td>
+        <td>Attribute Value</td>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>Creator</code></td>
+        <td>Microsoft Word</td>
+      </tr>
+      <tr>
+        <td><code>Author</code></td>
+        <td>Kate Burneson</td>
+      </tr>
+      <tr>
+        <td><code>CreationDate</code></td>
+        <td>Mar 30, 2002 08:12:44 AM -0800</td>
+      </tr>
+    </tbody>
+  </table><p>
+    Using the default attribute names is likely not appropriate if this example
+    PDF file's content is to be added to a Lucene index that has, for example,
+    document author fields named <code>authored_by</code> and creation time/date
+    stamps named <code>create_dt</code>. The default field names can be mapped
+    to their desired replacements easily, using
+    the <code>com.snowtide.pdf.lucene.LucenePDFConfiguration#setMetadataFieldMapping(java.lang.String,
+    java.lang.String)</code> method:
+  </p><pre class="brush:java">LucenePDFConfiguration config = new LucenePDFConfiguration();
+config.setMetadataFieldMapping(PDFxStream.ATTR_AUTHOR, "authored_by");
+config.setMetadataFieldMapping(PDFxStream.ATTR_CREATION_DATE, "create_dt");</pre><p>
+    This will cause any invocation of a <code>LucenePDFDocumentFactory.buildPDFDocument()</code>
+    method that uses the <code>config</code> object to build Lucene <code>Document</code>
+    instances that use the name <code>authored_by</code> for any <code>Author</code>
+    PDF metadata attribute, and <code>create_dt</code> for any <code>CreationDate</code>
+    attribute. Note that the most common PDF document attributes have
+    standardized names, which are fixed as static final constants in
+    <code class="class"><a href="http://downloads.snowtide.com/javadoc/PDFxStream/3.7.0/com/snowtide/pdf/Document.html">com.snowtide.pdf.Document</a></code>. All such constant fields
+    have an <code>ATTR</code> prefix to identify them as standard document
+    attribute names.
+  </p><h3>Storing vs. Indexing vs. Tokenizing</h3><p>
+    Fields in every Lucene document have three attributes associated with them,
+    typically referred to as <code>store</code>, <code>index</code>, and <code>token</code>.
+    These attributes control how Lucene processes each field when it is added to
+    an index as a part of a Document instance (a full discussion of these
+    attributes and how they impact Lucene indexing and searching is beyond the
+    scope of this guide; please refer to Lucene's documentation for more
+    information).
+  </p><p>
+    The values to be used for <code>store</code>, <code>index</code>, and <code>token</code>
+    when creating named fields in Lucene <code>Document</code>s can be set for
+    PDF document attributes via <code>com.snowtide.pdf.lucene.LucenePDFConfiguration#setMetadataSettings(boolean,
+      boolean, boolean)</code>. The values provided to this method are used for all
+    fields created for PDF document attributes. All of these settings default to
+    <code>true</code>.
+  </p><p>
+    The values for <code>store</code>, <code>index</code>, and <code>token</code>
+    for the main body of text read out of PDF files can be set via <code>com.snowtide.pdf.lucene.LucenePDFConfiguration#setBodyTextSettings(boolean,
+      boolean, boolean)</code>. The defaults for these settings are <code>false</code>,
+    <code>true</code>, and <code>true</code>, respectively.
+  </p><h2>Fin</h2><p>It should be clear now that, paired
+    with <a href="http://github.com/snowtide/lucene-pdf">lucene-pdf</a>,
+    PDFxStream can provide remarkably easy Lucene PDF indexing.  The conceptual
+    overview and code sample provided in here should get you most of the way
+    towards making Lucene play nice with PDF documents thanks to PDFxStream,
+    much to the benefit of your applications and projects.</p><p>Finally,
+    while <a href="http://github.com/snowtide/lucene-pdf">lucene-pdf</a> is
+    suitable for many typical Lucene PDF indexing jobs, there may be aspects of
+    your project's requirements that it cannot meet (e.g. taking advantage of
+    some of the more esoteric document indexing parameters available in more
+    recent versions of Lucene). In that case, its (liberally-licensed, MIT)
+    source can serve as a useful starting point, exhibiting how PDF data can be
+    extracted using PDFxStream and turned into Lucene Documents; feel free to
+    import it into your projects and modify it as needed to suit your needs.</p></div>
+    </div>
+    <div class="clear"></div>
+    <div class="help nav bottom grid_16 alpha omega">
+      <div class="toc"><a href="/help">PDFxStream v<span class="selectedversion">3.7.0</span> Technical Documentation</a></div>
+      <div class="help-next"><a href="art-of-pdf-text-extraction">Next &gt;&gt;</a> <span class="help-title">Appendix: The Art of Reading PDF Text</span></div>
+      <div class="help-prev"><a href="selective-pdf-text-extraction-based-on-bookmark-coordinates">&lt;&lt; Previous</a> <span class="help-title">Selective PDF Text Extraction Based on Bookmark Coordinates</span></div>
+    </div>
+  </div>
+</div>
+        <div class="clear"></div>
+        <div id="footer">
+          <div class="container_16">
+            <div class="grid_16">
+              <p>
+                ©2001-<span id="currentyear">2019</span> Snowtide Informatics Systems, Inc.
+                <br />
+                <strong><a href="mailto:help@snowtide.com">help@snowtide.com</a></strong>
+                <br />
+                <a href="/company">Company Info</a> <a href="/legal">Legal</a>
+              </p>
+            </div>
+            <div class="clear"></div>
+          </div>
+        </div>
+
+
+
+<script data-cfasync="false" type="text/javascript">/**/window.olark||(function(c){var f=window,d=document,l=f.location.protocol=="https:"?"https:":"http:",z=c.name,r="load";var nt=function(){
+f[z]=function(){
+(a.s=a.s||[]).push(arguments)};var a=f[z]._={
+},q=c.methods.length;while(q--){(function(n){f[z][n]=function(){
+f[z]("call",n,arguments)}})(c.methods[q])}a.l=c.loader;a.i=nt;a.p={
+0:+new Date};a.P=function(u){
+a.p[u]=new Date-a.p[0]};function s(){
+a.P(r);f[z](r)}f.addEventListener?f.addEventListener(r,s,false):f.attachEvent("on"+r,s);var ld=function(){function p(hd){
+hd="head";return["<",hd,"></",hd,"><",i,' onl' + 'oad="var d=',g,";d.getElementsByTagName('head')[0].",j,"(d.",h,"('script')).",k,"='",l,"//",a.l,"'",'"',"></",i,">"].join("")}var i="body",m=d[i];if(!m){
+return setTimeout(ld,100)}a.P(1);var j="appendChild",h="createElement",k="src",n=d[h]("div"),v=n[j](d[h](z)),b=d[h]("iframe"),g="document",e="domain",o;n.style.display="none";m.insertBefore(n,m.firstChild).id=z;b.frameBorder="0";b.id=z+"-loader";if(/MSIE[ ]+6/.test(navigator.userAgent)){
+b.src="javascript:false"}b.allowTransparency="true";v[j](b);try{
+b.contentWindow[g].open()}catch(w){
+c[e]=d[e];o="javascript:var d="+g+".open();d.domain='"+d.domain+"';";b[k]=o+"void(0);"}try{
+var t=b.contentWindow[g];t.write(p());t.close()}catch(x){
+b[k]=o+'d.write("'+p().replace(/"/g,String.fromCharCode(92)+'"')+'");d.close();'}a.P(2)};ld()};nt()})({
+loader: "static.olark.com/jsclient/loader0.js",name:"olark",methods:["configure","extend","declare","identify"]});
+/* custom configuration goes here (www.olark.com/documentation) */
+olark.identify('8334-299-10-7193');/**/</script><noscript><a href="https://www.olark.com/site/8334-299-10-7193/contact" title="Contact us" target="_blank">Questions? Feedback?</a> powered by <a href="http://www.olark.com?welcome" title="Olark live chat software">Olark live chat software</a></noscript>
+
+
+    </body>
+</html>

@@ -1,0 +1,149 @@
+.header {
+  padding: 1.5rem 1.5rem 2rem 1.5rem;
+  background-color: #f1eff0;
+}
+
+.icon-left {
+  position: absolute;
+  left: 2rem;
+  float: left;
+}
+
+.icon-right {
+  position: absolute;
+  right: 2rem;
+  float: right;
+}
+
+.logo-holder {
+  margin: auto;
+  text-align: center;
+}
+
+.logo {
+  width: 600px;
+}
+
+.messages-holder {
+  position: fixed;
+  top: 210px;
+  bottom: 0;
+  width: 100%;
+  overflow-y: scroll;
+}
+
+.message-box {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  padding: 1rem;
+  background-color: #f1eff0;
+}
+
+.message-holder {
+  text-align: right;
+  padding: 0.5rem 20rem 0.5rem 1rem;
+}
+
+.message {
+  margin: 0;
+  padding: 0.5rem 1rem;
+  border-radius: 1.5rem;
+  display: inline-block;
+  color: #32292f;
+  max-width: 500px;
+  text-align: left;
+}
+
+.bot-message-holder {
+  text-align: left;
+  padding: 0.5rem 1rem 0.5rem 20rem;
+}
+
+.bot-message {
+  margin: 0;
+  padding: 0.5rem 1rem;
+  border-radius: 1.5rem;
+  background-color: #c1272d;
+  /* border-left: 5px solid #c1272d; */
+  display: inline-block;
+  color: #f1eff0;
+  max-width: 500px;
+}
+
+.send-holder {
+  padding-left: 20%;
+  padding-right: 20%;
+}
+
+.form-control:focus {
+  box-shadow: none;
+  border-color: #ced4da;
+}
+
+.fas {
+  cursor: pointer;
+}
+
+.icon-colour, .icon-hover:hover {
+  color: #c1272d;
+}
+
+button.btn.btn-chatbot {
+  background-color: #c1272d;
+  color: #fff;
+}
+
+.filter-container {
+  margin-left: 20%;
+  margin-right: 20%;
+  background-color: #fff;
+  padding-top: 1rem;
+}
+
+.filter-title {
+  font-size: large;
+  padding: 0.5rem;
+  font-weight: 500;
+  line-height: 1.2;
+}
+
+.filter-item-small {
+  min-width: 100px;
+}
+
+label.form-check-label {
+  padding-left: 1rem;
+}
+
+input.form-check-input {
+  margin-left: 0rem;
+}
+
+input.date {
+  font-size: small;
+}
+
+input.site {
+  font-size: small;
+}
+
+.partner-img {
+  max-width: 120px;
+  display: block;
+  margin: auto;
+}
+
+.vertical-align {
+  display: flex;
+  align-items: center;
+}
+
+.dot {
+  cursor: pointer;
+  height: 20px;
+  width: 20px;
+  margin: 0.25rem;
+  border-radius: 50%;
+  display: inline-block;
+}
